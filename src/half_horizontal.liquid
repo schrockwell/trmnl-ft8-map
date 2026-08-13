@@ -1,0 +1,45 @@
+{% assign cf = trmnl.plugin_settings.custom_fields_values %}
+{% assign band = cf.band %}
+{% assign mode = cf.mode %}
+{% unless mode %}
+  {% if spots.size > 0 %}{% assign mode = spots[0].mode | downcase %}{% else %}{% assign mode = 'all' %}{% endif %}
+{% endunless %}
+{% unless band %}
+  {% assign band = 'all' %}
+  {% for c in counts %}
+    {% if forloop.first and forloop.last %}{% assign band = c[0] %}{% endif %}
+  {% endfor %}
+{% endunless %}
+{% assign icon_svg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round"><path d="M2 9 C5 3, 9 3, 12 9 C15 15, 19 15, 22 9"/><path d="M2 15 C5 9, 9 9, 12 15 C15 21, 19 21, 22 15"/></svg>' %}
+
+{% comment %}
+sizing: fixed integer pixel dimensions per breakpoint (all exactly 2:1) so the
+svg always lands on pixel-perfect boundaries -- framework css handles the rest.
+560x280 fits kindle (sm), 720x360 fits OG (md), 1000x500 fills TRMNL X (lg).
+{% endcomment %}
+<div class="layout layout--col layout--stretch">
+  <div class="flex flex--center-x flex--top stretch-x stretch-y">
+    <svg viewBox="0 0 720 360" preserveAspectRatio="xMidYMid meet" class="w--full h--full sm:w--[560px] sm:h--[280px] md:w--[720px] md:h--[360px] lg:w--[1000px] lg:h--[500px]">
+      {% render 'world_map' %}
+      {% for s in spots %}
+      <path d="{{ s.path }}" fill="none" stroke="#000000" stroke-width="1.4" stroke-linecap="round"/>
+      {% endfor %}
+      {% for s in spots %}
+      <circle cx="{{ s.x1 }}" cy="{{ s.y1 }}" r="2.6" fill="#ffffff" stroke="#000000" stroke-width="1.2"/>
+      {% endfor %}
+      {% for s in spots %}
+      <circle cx="{{ s.x2 }}" cy="{{ s.y2 }}" r="2.6" fill="#000000" stroke="#ffffff" stroke-width="1"/>
+      {% endfor %}
+      {% if spots.size == 0 %}
+      <rect x="180" y="164" width="360" height="32" fill="#ffffff" stroke="#000000"/>
+      <text x="360" y="184" text-anchor="middle" font-size="13" fill="#000000">no spots heard in the last 6 hours</text>
+      {% endif %}
+    </svg>
+  </div>
+</div>
+
+<div class="title_bar">
+  <img class="image" src="data:image/svg+xml;base64,{{ icon_svg | base64_encode }}" />
+  <span class="title">RBN Map</span>
+  <span class="instance">{% if mode == 'all' %}all modes{% else %}{{ mode | upcase }}{% endif %} &middot; {% if band == 'all' %}all bands{% else %}{{ band }}{% endif %}{% if cf.dx_call and cf.dx_call != '' %} &middot; dx {{ cf.dx_call | strip | upcase }}{% endif %}{% if cf.de_call and cf.de_call != '' %} &middot; de {{ cf.de_call | strip | upcase }}{% endif %} &middot; {{ spots.size }} spot{% unless spots.size == 1 %}s{% endunless %}</span>
+</div>
