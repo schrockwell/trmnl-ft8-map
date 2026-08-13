@@ -1,0 +1,96 @@
+---
+strategy: polling
+no_screen_padding: 'no'
+dark_mode: 'no'
+static_data: ''
+polling_verb: get
+framework_version: 3.2.0
+serverless_language: node
+polling_url: https://rbn.schrockwell.com/api/spots?loc=1&limit={{ limit }}{% if band != 'all' %}&band={{ band }}{% endif %}{% if mode != 'all' %}&mode={{ mode }}{% endif %}{% if dx_call and dx_call != '' %}&dx={{ dx_call | strip | upcase | url_encode }}{% endif %}{% if de_call and de_call != '' %}&de={{ de_call | strip | upcase | url_encode }}{% endif %}{% if unique == true or unique == 'true' %}&unique=1{% endif %}
+polling_headers: ''
+polling_body: ''
+id: 414484
+oauth_enabled: 'false'
+oauth_pkce_enabled: 'no'
+oauth_authorize_url: ''
+oauth_token_url: ''
+oauth_scopes: ''
+oauth_scope_separator: ''
+oauth_refresh_url: ''
+oauth_auth_params: ''
+oauth_token_headers: ''
+oauth_token_site: ''
+oauth_token_params: ''
+oauth_token_request_auth_method: ''
+oauth_body_format: ''
+oauth_token_response_metadata: ''
+oauth_authorization_method: ''
+oauth_refresh_params: ''
+oauth_token_field_name: ''
+oauth_expiry_field_name: ''
+oauth_expiry_strategy: ''
+oauth_fixed_expiry_ms: ''
+custom_fields:
+- keyname: band
+  field_type: select
+  name: Band
+  description: Filter spots by band
+  options:
+  - 'All bands: all'
+  - 160m
+  - 80m
+  - 60m
+  - 40m
+  - 30m
+  - 20m
+  - 17m
+  - 15m
+  - 12m
+  - 10m
+  - 6m
+  - 2m
+  default: 20m
+- keyname: mode
+  field_type: select
+  name: Mode
+  description: Filter spots by mode
+  options:
+  - FT8
+  - FT4
+  default: ft8
+- keyname: dx_call
+  field_type: string
+  name: DX Callsign
+  description: Only show spots of this callsign
+  help_text: Optional
+  placeholder: W1AW
+  optional: true
+- keyname: de_call
+  field_type: string
+  name: Skimmer Callsign
+  description: Only show spots heard by this skimmer station
+  help_text: Optional. SSID variants are matched too.
+  placeholder: WZ7I
+  optional: true
+- keyname: unique
+  field_type: boolean
+  name: One Spot Per Callsign?
+  description: Show only the latest spot of each DX callsign (strongest signal on a tie)
+  default: false
+- keyname: limit
+  field_type: number
+  name: Max Spots
+  description: Maximum number of spots to plot
+  help_text: 1 to 500
+  min: 1
+  max: 500
+  default: 100
+- keyname: bio
+  name: About This Plugin
+  category: calendar
+  field_type: author_bio
+  description: Recent FT8 and FT4 spots heard on the Reverse Beacon Network
+  github_url: https://github.com/schrockwell/trmnl-ft8-map
+name: Ham Radio - FT8 Map
+description: Spots from Reverse Beacon Network
+refresh_interval: 15
